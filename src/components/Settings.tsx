@@ -245,7 +245,7 @@ export default function Settings({ user }: SettingsProps) {
               {isGoogleUser && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-blue-700 text-sm">
-                    You're signed in with Google. Some profile information is managed by your Google account.
+                    You&rsquo;re signed in with Google. Some profile information is managed by your Google account.
                   </p>
                 </div>
               )}
