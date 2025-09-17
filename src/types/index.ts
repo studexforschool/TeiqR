@@ -1,6 +1,7 @@
 export type TaskCategory = 'work' | 'personal' | 'urgent' | 'project' | 'meeting' | 'other'
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical'
 export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'completed' | 'cancelled'
+export type TaskGrade = number | null
 
 export interface Subtask {
   id: string
@@ -28,6 +29,7 @@ export interface Task {
   actualHours?: number
   assignedTo?: string
   projectId?: string
+  grade?: TaskGrade
 }
 
 export interface User {
