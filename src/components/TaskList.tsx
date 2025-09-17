@@ -1,8 +1,24 @@
 'use client'
 
-import { useState } from 'react'
-import { Check, Edit, Trash2, Filter, Search, Calendar, Flag, BookOpen, Award } from 'lucide-react'
+import { useMemo, useState, useCallback } from 'react'
+import { Check, Edit, Trash2, Filter, Search, Calendar, Flag, BookOpen } from 'lucide-react'
 import { Task, TaskCategory, TaskPriority } from '@/types'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  sortableKeyboardCoordinates
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 interface TaskListProps {
   tasks: Task[]
@@ -19,7 +35,12 @@ export default function TaskList({ tasks, onToggleComplete, onEditTask, onDelete
   const [searchTerm, setSearchTerm] = useState('')
   const [draggingId, setDraggingId] = useState<string | null>(null)
 
-  const filteredTasks = tasks.filter(task => {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
+
+  const filteredTasks = useMemo(() => tasks.filter(task => {
     const matchesStatus = filter === 'all' || 
       (filter === 'pending' && !task.completed) ||
       (filter === 'completed' && task.completed)
@@ -31,36 +52,118 @@ export default function TaskList({ tasks, onToggleComplete, onEditTask, onDelete
       task.description.toLowerCase().includes(searchTerm.toLowerCase())
 
     return matchesStatus && matchesCategory && matchesPriority && matchesSearch
-  })
+  }), [tasks, filter, categoryFilter, priorityFilter, searchTerm])
 
-  // Drag and drop handlers
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, taskId: string) => {
-    setDraggingId(taskId)
-    e.dataTransfer.effectAllowed = 'move'
-    e.dataTransfer.setData('text/plain', taskId)
-  }
+  const ids = useMemo(() => filteredTasks.map(t => t.id), [filteredTasks])
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-  }
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetId: string) => {
-    e.preventDefault()
-    const sourceId = draggingId || e.dataTransfer.getData('text/plain')
-    if (!sourceId || sourceId === targetId) return
-
-    const ids = filteredTasks.map(t => t.id)
-    const from = ids.indexOf(sourceId)
-    const to = ids.indexOf(targetId)
-    if (from === -1 || to === -1) return
-
-    const newIds = [...ids]
-    const [moved] = newIds.splice(from, 1)
-    newIds.splice(to, 0, moved)
-
-    onReorder?.(newIds)
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
     setDraggingId(null)
+    if (!over || active.id === over.id) return
+    const oldIndex = ids.indexOf(String(active.id))
+    const newIndex = ids.indexOf(String(over.id))
+    if (oldIndex === -1 || newIndex === -1) return
+    const newIds = arrayMove(ids, oldIndex, newIndex)
+    onReorder?.(newIds)
+  }, [ids, onReorder])
+
+  // Sortable item component (keeps styles and handlers tidy)
+  const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    } as React.CSSProperties
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`card p-6 transition-all duration-200 hover:shadow-xl ${
+          task.completed ? 'opacity-75' : ''
+        } ${isDragging || draggingId === task.id ? 'ring-2 ring-primary-400' : ''}`}
+        onPointerDown={() => setDraggingId(task.id)}
+        onPointerCancel={() => setDraggingId(null)}
+        onPointerUp={() => setDraggingId(null)}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex items-start space-x-4 flex-1">
+            <button
+              onClick={() => onToggleComplete(task.id)}
+              className={`mt-1 w-5 h-5 border-2 flex items-center justify-center transition-colors ${
+                task.completed
+                  ? 'bg-primary-900 border-primary-900 text-white'
+                  : 'border-primary-300 hover:border-primary-900'
+              }`}
+            >
+              {task.completed && <Check className="h-3 w-3" />}
+            </button>
+
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 mb-2">
+                <h3 className={`text-lg font-semibold ${
+                  task.completed ? 'line-through text-primary-600' : 'text-primary-900'
+                }`}>
+                  {task.title}
+                </h3>
+                <span className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide ${
+                  getCategoryColor(task.category)
+                }`}>
+                  {task.category}
+                </span>
+                <span className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide border ${
+                  getPriorityColor(task.priority)
+                }`}>
+                  {task.priority}
+                </span>
+              </div>
+
+              {task.description && (
+                <p className={`text-primary-700 mb-3 ${
+                  task.completed ? 'line-through' : ''
+                }`}>
+                  {task.description}
+                </p>
+              )}
+
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-primary-600">
+                <div className="flex items-center space-x-1">
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">{formatDueDate(task.dueDate)}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Flag className="h-4 w-4" />
+                  <span className="capitalize text-xs sm:text-sm">{task.priority} priority</span>
+                </div>
+              </div>
+
+              {task.notes && (
+                <div className="mt-3 p-3 bg-primary-50 border-l-4 border-primary-300">
+                  <p className="text-sm text-primary-700">{task.notes}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 ml-4">
+            <button
+              onClick={() => onEditTask(task)}
+              className="p-2 text-primary-600 hover:text-primary-900 hover:bg-primary-100 transition-colors"
+            >
+              <Edit className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => onDeleteTask(task.id)}
+              className="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const getPriorityColor = (priority: TaskPriority) => {
@@ -172,96 +275,13 @@ export default function TaskList({ tasks, onToggleComplete, onEditTask, onDelete
             </p>
           </div>
         ) : (
-          filteredTasks.map(task => (
-            <div
-              key={task.id}
-              className={`card p-6 transition-all duration-200 hover:shadow-xl ${
-                task.completed ? 'opacity-75' : ''
-              } ${draggingId === task.id ? 'ring-2 ring-primary-400' : ''}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, task.id)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, task.id)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-4 flex-1">
-                  <button
-                    onClick={() => onToggleComplete(task.id)}
-                    className={`mt-1 w-5 h-5 border-2 flex items-center justify-center transition-colors ${
-                      task.completed
-                        ? 'bg-primary-900 border-primary-900 text-white'
-                        : 'border-primary-300 hover:border-primary-900'
-                    }`}
-                  >
-                    {task.completed && <Check className="h-3 w-3" />}
-                  </button>
-
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className={`text-lg font-semibold ${
-                        task.completed ? 'line-through text-primary-600' : 'text-primary-900'
-                      }`}>
-                        {task.title}
-                      </h3>
-                      
-                      <span className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide ${
-                        getCategoryColor(task.category)
-                      }`}>
-                        {task.category}
-                      </span>
-                      
-                      <span className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide border ${
-                        getPriorityColor(task.priority)
-                      }`}>
-                        {task.priority}
-                      </span>
-                    </div>
-
-                    {task.description && (
-                      <p className={`text-primary-700 mb-3 ${
-                        task.completed ? 'line-through' : ''
-                      }`}>
-                        {task.description}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-primary-600">
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4" />
-                        <span className="text-xs sm:text-sm">{formatDueDate(task.dueDate)}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Flag className="h-4 w-4" />
-                        <span className="capitalize text-xs sm:text-sm">{task.priority} priority</span>
-                      </div>
-                      {/* Removed grade display: not part of Task type */}
-                    </div>
-
-                    {task.notes && (
-                      <div className="mt-3 p-3 bg-primary-50 border-l-4 border-primary-300">
-                        <p className="text-sm text-primary-700">{task.notes}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2 ml-4">
-                  <button
-                    onClick={() => onEditTask(task)}
-                    className="p-2 text-primary-600 hover:text-primary-900 hover:bg-primary-100 transition-colors"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => onDeleteTask(task.id)}
-                    className="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={ids}>
+              {filteredTasks.map(task => (
+                <SortableTask key={task.id} task={task} />
+              ))}
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 
@@ -273,7 +293,7 @@ export default function TaskList({ tasks, onToggleComplete, onEditTask, onDelete
               Showing {filteredTasks.length} of {tasks.length} tasks
             </span>
             <span>
-              {filteredTasks.filter(t => t.completed).length} completed, {' '}
+              {filteredTasks.filter(t => t.completed).length} completed,{' '}
               {filteredTasks.filter(t => !t.completed).length} pending
             </span>
           </div>
