@@ -299,7 +299,7 @@ export default function AuthPage() {
             {/* Switch Mode */}
             <div className="mt-6 text-center">
               <p className="text-primary-700">
-                {isLogin ? "Don't have an account? " : "Already have an account? "}
+                {isLogin ? "Don\u0027t have an account? " : "Already have an account? "}
                 <button
                   onClick={() => {
                     setIsLogin(!isLogin)
