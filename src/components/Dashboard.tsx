@@ -274,7 +274,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 Welcome back, {user.name}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-lg">
-                Here's your task overview for today.
+                Here&rsquo;s your task overview for today.
               </p>
             </div>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Activity, Clock, User, Eye, Filter, Search } from 'lucide-react'
 
 interface ActivityLog {
@@ -22,14 +22,7 @@ export default function ActivityMonitor() {
   const [searchTerm, setSearchTerm] = useState('')
   const [timeFilter, setTimeFilter] = useState('24')
 
-  useEffect(() => {
-    fetchLogs()
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchLogs, 30000)
-    return () => clearInterval(interval)
-  }, [timeFilter])
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       const params = new URLSearchParams()
       if (timeFilter !== 'all') {
@@ -46,7 +39,14 @@ export default function ActivityMonitor() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [timeFilter])
+
+  useEffect(() => {
+    fetchLogs()
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(fetchLogs, 30000)
+    return () => clearInterval(interval)
+  }, [timeFilter, fetchLogs])
 
   const filteredLogs = logs.filter(log => {
     const matchesFilter = filter === 'all' || log.action.toLowerCase().includes(filter.toLowerCase())
@@ -82,7 +82,7 @@ export default function ActivityMonitor() {
       case 'TASK_CREATED':
         return (
           <div className="text-sm text-gray-600">
-            <span className="font-medium">"{details.title}"</span> - 
+            <span className="font-medium">&ldquo;{details.title}&rdquo;</span> - 
             {details.category} ({details.priority} priority)
             {details.dueDate && <span> - Due: {new Date(details.dueDate).toLocaleDateString()}</span>}
           </div>
@@ -90,7 +90,7 @@ export default function ActivityMonitor() {
       case 'TASK_UPDATED':
         return (
           <div className="text-sm text-gray-600">
-            <span className="font-medium">"{details.title}"</span>
+            <span className="font-medium">&ldquo;{details.title}&rdquo;</span>
             {details.completed !== undefined && (
               <span> - {details.completed ? 'Completed' : 'Uncompleted'}</span>
             )}
