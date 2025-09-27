@@ -20,13 +20,15 @@ import {
   AlertCircle,
   Play,
   Pause,
-  Square
+  Square,
+  BookOpen
 } from 'lucide-react'
+import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
 import TaskModal from './TaskModal_enhanced'
 import TaskList from './TaskList'
-import Settings from './Settings'
-import ProjectManager from './ProjectManager'
+import Settings from './Settings_Enhanced'
+import ProjectManager from './ProjectManager_Fixed'
 import TimeTracker from './TimeTracker'
 import AIAssistant from './AIAssistant'
 import OutlookCalendar from './OutlookCalendar'
@@ -37,11 +39,21 @@ interface DashboardProps {
     id: string
     name: string
     email: string
-  }
+  } | null
   onLogout: () => void
 }
 
 export default function Dashboard({ user, onLogout }: DashboardProps) {
+  // Early return if no user
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">Loading user data...</p>
+        </div>
+      </div>
+    )
+  }
   const [activeView, setActiveView] = useState<'dashboard' | 'tasks' | 'calendar' | 'projects' | 'time' | 'chat' | 'settings'>('dashboard')
   const [tasks, setTasks] = useState<Task[]>([])
   const [showTaskModal, setShowTaskModal] = useState(false)
@@ -174,11 +186,14 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                TeiqR
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="bg-primary-900 p-2 rounded-lg group-hover:bg-primary-800 transition-colors">
+                <BookOpen className="h-6 w-6 text-white" />
               </div>
-            </div>
+              <span className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                STUDEX
+              </span>
+            </Link>
             
             <div className="flex items-center space-x-8">
               <nav className="hidden md:flex space-x-6">
