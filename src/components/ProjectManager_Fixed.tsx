@@ -258,9 +258,9 @@ export default function ProjectManagerFixed() {
       
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your academic projects</p>
           </div>
           <button
@@ -269,7 +269,7 @@ export default function ProjectManagerFixed() {
               setEditingProject(null)
               setShowCreateModal(true)
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors w-full sm:w-auto"
           >
             <Plus className="h-4 w-4" />
             New Project
@@ -277,50 +277,50 @@ export default function ProjectManagerFixed() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Projects</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{projects.length}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Projects</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{projects.length}</p>
               </div>
-              <Folder className="h-8 w-8 text-blue-500" />
+              <Folder className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                   {projects.filter(p => p.status === 'active').length}
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-green-500" />
+              <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Completed</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                   {projects.filter(p => p.status === 'completed').length}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-purple-500" />
+              <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-purple-500" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Files</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Files</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                   {projects.reduce((acc, p) => acc + (p.files?.length || 0), 0)}
                 </p>
               </div>
-              <File className="h-8 w-8 text-yellow-500" />
+              <File className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
             </div>
           </div>
         </div>
@@ -343,13 +343,13 @@ export default function ProjectManagerFixed() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {projects.map((project) => (
-              <div key={project.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-shadow">
+              <div key={project.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${getPriorityColor(project.priority)}`} />
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{project.name}</h3>
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${getPriorityColor(project.priority)}`} />
+                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">{project.name}</h3>
                   </div>
                   <button
                     onClick={() => openEditModal(project)}

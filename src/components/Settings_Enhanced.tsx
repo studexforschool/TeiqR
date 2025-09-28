@@ -215,7 +215,7 @@ export default function SettingsEnhanced({ user }: SettingsProps) {
   }
 
   return (
-    <div className="relative p-6 bg-white dark:bg-gray-900 min-h-screen">
+    <div className="relative p-4 sm:p-6 bg-white dark:bg-gray-900 min-h-screen">
       <InteractiveGridPattern
         className={cn(
           "[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]",
@@ -224,43 +224,43 @@ export default function SettingsEnhanced({ user }: SettingsProps) {
       />
       
       <div className="relative z-10 max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your account and preferences</p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-1 mb-8 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+        <div className="flex space-x-1 mb-6 sm:mb-8 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg overflow-x-auto">
           {[
             { id: 'profile', label: 'Profile', icon: User },
             { id: 'account', label: 'Account', icon: Shield },
-            { id: 'preferences', label: 'Preferences', icon: Globe },
+            { id: 'preferences', label: 'Prefs', icon: Globe },
             { id: 'privacy', label: 'Privacy', icon: Lock }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
-                "flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors",
+                "flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-md transition-colors whitespace-nowrap min-w-0",
                 activeTab === tab.id
                   ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
                   : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               )}
             >
-              <tab.icon className="w-4 h-4" />
-              <span className="font-medium">{tab.label}</span>
+              <tab.icon className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium text-xs sm:text-sm truncate">{tab.label}</span>
             </button>
           ))}
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
           {/* Profile Tab */}
           {activeTab === 'profile' && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Profile Information</h2>
+            <div className="space-y-4 sm:space-y-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-4">Profile Information</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Name

@@ -183,20 +183,21 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="bg-primary-900 p-2 rounded-lg group-hover:bg-primary-800 transition-colors">
-                <BookOpen className="h-6 w-6 text-white" />
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+              <div className="bg-primary-900 p-1.5 sm:p-2 rounded-lg group-hover:bg-primary-800 transition-colors">
+                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 STUDEX
               </span>
             </Link>
             
-            <div className="flex items-center space-x-8">
-              <nav className="hidden md:flex space-x-6">
+            <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-8">
+              <nav className="hidden lg:flex space-x-6">
                 {[
                   { key: 'dashboard', label: 'Dashboard' },
                   { key: 'tasks', label: 'Tasks' },
@@ -240,11 +241,11 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 <span className="hidden sm:inline">Add Task</span>
               </button>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <ThemeToggle />
-                <span className="text-sm text-gray-600 dark:text-gray-300 hidden sm:inline">{user.name}</span>
-                <button onClick={onLogout} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors">
-                  <LogOut className="h-5 w-5" />
+                <span className="text-sm text-gray-600 dark:text-gray-300 hidden md:inline truncate max-w-24 lg:max-w-none">{user.name}</span>
+                <button onClick={onLogout} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors p-1">
+                  <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
               </div>
             </div>
@@ -253,26 +254,28 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       </header>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="px-4 py-2">
-          <nav className="flex space-x-1 overflow-x-auto">
+      <div className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="px-2 sm:px-4 py-2">
+          <nav className="flex space-x-1 overflow-x-auto scrollbar-hide">
             {[
-              { key: 'dashboard', label: 'Dashboard' },
-              { key: 'calendar', label: 'Calendar' },
+              { key: 'dashboard', label: 'Home' },
               { key: 'tasks', label: 'Tasks' },
-              { key: 'chat', label: 'AI Help' },
+              { key: 'calendar', label: 'Calendar' },
+              { key: 'projects', label: 'Projects' },
+              { key: 'time', label: 'Timer' },
+              { key: 'chat', label: 'AI' },
               { key: 'settings', label: 'Settings' }
             ].map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setActiveView(key as any)}
-                className={`px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
+                className={`flex items-center justify-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors min-w-0 ${
                   activeView === key 
-                    ? 'bg-black text-white' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'bg-primary-600 text-white dark:bg-primary-500' 
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
-                {label}
+                <span className="truncate">{label}</span>
               </button>
             ))}
           </nav>
@@ -280,25 +283,25 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {activeView === 'dashboard' && (
           <div className="space-y-6">
             {/* Welcome Section */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Welcome back, {user.name}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-lg">
+              <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
                 Here&rsquo;s your task overview for today.
               </p>
             </div>
 
             {/* Quick Add + Focus Timer */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Quick Add */}
-              <div className="md:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+              <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quick Add Task</label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     value={quickTitle}
                     onChange={(e) => setQuickTitle(e.target.value)}

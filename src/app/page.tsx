@@ -61,17 +61,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Header */}
-      <header className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md" : "bg-transparent"
-      )}>
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="bg-primary-900 p-2 rounded-lg">
-                <BookOpen className="h-6 w-6 text-white" />
+      <header className="relative z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="bg-primary-900 p-1.5 sm:p-2 rounded-lg">
+                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">STUDEX</span>
+              <span className="text-lg sm:text-xl font-bold text-primary-900">STUDEX</span>
             </div>
 
             {/* Desktop Menu */}
@@ -108,29 +105,35 @@ export default function Home() {
               </div>
             </div>
           )}
-        </nav>
+        </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-20 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <InteractiveGridPattern
           className={cn(
-            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+            "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)] sm:[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
             "absolute inset-0 w-full h-full opacity-20"
           )}
         />
-        <div className="container mx-auto text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            Master Your Academic Journey with <span className="text-primary-600">STUDEX</span>
+        
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
+            Study Smarter, <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">
+              Achieve More
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            The all-in-one student productivity platform that helps you organize tasks, track time, manage projects, and ace your studies with AI-powered assistance.
+          
+          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
+            The ultimate study companion for students. Organize tasks, track progress, 
+            collaborate with peers, and achieve your academic goals with ease.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth" className="bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors inline-flex items-center justify-center">
-              Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
+            <Link href="/auth" className="bg-primary-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-primary-700 transition-colors inline-flex items-center justify-center">
+              Start Free Trial <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
-            <Link href="#features" className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <Link href="#features" className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
               Learn More
             </Link>
           </div>
@@ -138,13 +141,13 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800/50">
+      <section className="py-12 sm:py-16 bg-gray-50 dark:bg-gray-800/50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-primary-600 mb-2">{stat.value}</div>
-                <div className="text-gray-600 dark:text-gray-400">{stat.label}</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-600 mb-1 sm:mb-2">{stat.value}</div>
+                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{stat.label}</div>
               </div>
             ))}
           </div>

@@ -176,32 +176,32 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center p-4 overflow-hidden">
+    <div className="relative min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center p-4 sm:p-6 overflow-hidden">
       <InteractiveGridPattern
         className={cn(
-          "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
+          "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)] sm:[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
           "absolute inset-0 w-full h-full"
         )}
       />
-      <div className="relative z-10 max-w-md w-full">
+      <div className="relative z-10 max-w-sm sm:max-w-md w-full">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="bg-primary-900 p-3 rounded-lg">
-              <BookOpen className="h-8 w-8 text-white" />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-4">
+            <div className="bg-primary-900 p-2 sm:p-3 rounded-lg">
+              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-primary-900">STUDEX</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-primary-900">STUDEX</h1>
           </div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-2">
             {isLogin ? 'Welcome Back!' : 'Create Account'}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             {isLogin ? 'Sign in to continue to your dashboard' : 'Sign up to start organizing your studies'}
           </p>
         </div>
 
         {/* Auth Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8">
           {authError && (
             <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center space-x-2">
               <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
@@ -338,7 +338,7 @@ export default function AuthPage() {
               type="button"
               onClick={() => {
                 setIsLogin(!isLogin)
-                setErrors({})
+                setErrors({ name: '', email: '', password: '' })
                 setAuthError('')
               }}
               className="font-medium text-primary-600 hover:text-primary-500"
